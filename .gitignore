@@ -1,3 +1,6 @@
+# Secretos: la clave de la API nunca se sube
+.env
+
 # Datos que genera la app (conversaciones personales y registros CSV)
 datos/
 
