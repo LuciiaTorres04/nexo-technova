@@ -1,0 +1,14 @@
+# Datos que genera la app (conversaciones personales y registros CSV)
+datos/
+
+# Entorno virtual y cachés de Python
+.venv/
+venv/
+__pycache__/
+*.pyc
+
+# Basura que añade Windows a los archivos descargados
+*Zone.Identifier
+
+# Editor
+.vscode/
