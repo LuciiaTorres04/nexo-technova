@@ -79,10 +79,6 @@ Por dentro hay cinco "cerebros" intercambiables: `ModeloEco`, `ModeloReglas`,
   **buscar en todos los mensajes** con el texto resaltado. Atajos: `Alt+N`
   nueva, `/` buscar.
 
-> La versión completa, con voz, informe PDF y laboratorio con top-p, está en
-> la carpeta `nexo`. Esta (`nexo-clase`) es la versión más sencilla para
-> entregar.
-
 ## Instalación
 
 ```powershell
