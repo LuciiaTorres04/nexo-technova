@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Métricas · NEXO</title>
+  <script>
+    try { const t = localStorage.getItem("nexo-tema"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500..700&family=Inter:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="{{ url_for('static', filename='estilo.css') }}">
+</head>
+<body>
+<main class="metricas">
+  <header class="metricas-cabecera">
+    <div class="logo" aria-hidden="true">N</div>
+    <div>
+      <h1>Panel de métricas</h1>
+      <p>Cómo responde NEXO: reglas propias frente a IA, en tiempo, tokens y dinero.</p>
+    </div>
+    <div class="acciones">
+      <a class="boton" href="/">← Volver al chat</a>
+    </div>
+  </header>
+
+  <section class="panel heroe" aria-label="Resumen">
+    <div>
+      <div class="etiqueta">Ahorrado gracias a las reglas</div>
+      <div class="valor" id="ahorro">0,0000 €</div>
+      <div class="detalle" id="ahorro-detalle">Lo que habrían costado las respuestas de las reglas si las hubiera dado la IA.</div>
+    </div>
+    <div class="fichas-stat" id="fichas"></div>
+  </section>
+
+  <div class="rejilla-2">
+    <section class="panel">
+      <h2>¿Quién responde?</h2>
+      <p class="sub">Reparto de todas las respuestas del chat</p>
+      <div id="reparto"></div>
+    </section>
+    <section class="panel">
+      <h2>Velocidad media por respuesta</h2>
+      <p class="sub">Misma escala para los dos: así se ve la diferencia real</p>
+      <div class="velocidad" id="velocidad"></div>
+    </section>
+  </div>
+
+  <section class="panel">
+    <h2>¿Gustan las respuestas?</h2>
+    <p class="sub">Porcentaje de 👍 sobre las respuestas valoradas, reglas frente a IA</p>
+    <div class="velocidad" id="opiniones"></div>
+  </section>
+
+  <section class="panel">
+    <h2>Tokens de IA por día</h2>
+    <p class="sub">Tokens de salida gastados por la IA en el chat (pasa el ratón por una columna)</p>
+    <div class="grafica" id="grafica-dias"></div>
+  </section>
+
+  <section class="panel">
+    <h2>Últimas respuestas</h2>
+    <p class="sub">Las 15 más recientes, de <code>datos/metricas.csv</code></p>
+    <div class="tabla-scroll" id="tabla"></div>
+  </section>
+</main>
+<script src="{{ url_for('static', filename='metricas.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NEXO · TechNova</title>
+  <!-- Aplica el tema guardado ANTES de pintar, para que no parpadee. -->
+  <script>
+    try { const t = localStorage.getItem("nexo-tema"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500..700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
+  <link rel="stylesheet" href="{{ url_for('static', filename='estilo.css') }}">
+</head>
+<body>
+<!-- Iconos (se reutilizan con <use href="#i-...">) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-buscar" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
+  <symbol id="i-cerrar" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+  <symbol id="i-rayos" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 9h2M11 9h6M7 13h5M14 13h3M7 16h3"/></symbol>
+  <symbol id="i-lab" viewBox="0 0 24 24"><path d="M9 3h6M10 3v6l-5.5 9.5A1.7 1.7 0 0 0 6 21h12a1.7 1.7 0 0 0 1.5-2.5L14 9V3"/><path d="M7.5 15h9"/></symbol>
+  <symbol id="i-sol" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
+  <symbol id="i-luna" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></symbol>
+  <symbol id="i-metricas" viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></symbol>
+  <symbol id="i-lapiz" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="m13.5 6.5 4 4"/></symbol>
+  <symbol id="i-papelera" viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></symbol>
+  <symbol id="i-enviar" viewBox="0 0 24 24"><path d="M3 11.5 21 3l-8.5 18-2.2-7.3z"/></symbol>
+</svg>
+
+<div class="layout">
+
+  <!-- ===================== Historial lateral ===================== -->
+  <aside class="lateral" id="lateral" aria-label="Historial de conversaciones">
+    <div class="marca">
+      <div class="logo" aria-hidden="true">N</div>
+      <div>
+        <div class="nombre">NEXO</div>
+        <div class="empresa">TechNova · atención al cliente</div>
+      </div>
+      <button type="button" class="icono solo-movil" id="cerrar-lateral" aria-label="Cerrar historial">
+        <svg class="i"><use href="#i-cerrar"/></svg>
+      </button>
+    </div>
+
+    <button type="button" class="nueva" id="nueva">
+      <svg class="i"><use href="#i-plus"/></svg> Nueva conversación <kbd>Alt N</kbd>
+    </button>
+
+    <div class="buscar-caja">
+      <svg class="i"><use href="#i-buscar"/></svg>
+      <input type="search" class="buscar" id="buscar" placeholder="Buscar en todo el historial…" aria-label="Buscar en todo el historial">
+    </div>
+
+    <p class="lateral-vacio" id="vacio" hidden></p>
+    <nav class="lista" id="lista" aria-label="Conversaciones"></nav>
+
+    <div class="lateral-pie">
+      <a class="enlace-metricas" href="/metricas">
+        <svg class="i"><use href="#i-metricas"/></svg> Panel de métricas
+      </a>
+      <div class="contador" title="Suma de todas las respuestas de la IA guardadas en datos/uso_llm.csv (no se pone a cero)">
+        <span>Gasto en IA</span>
+        <span><strong id="total-tokens">0</strong> tokens · <strong id="total-coste">0,000000</strong> €</span>
+      </div>
+    </div>
+  </aside>
+  <div class="fondo-lateral" id="fondo-lateral" hidden></div>
+
+  <!-- ===================== Chat ===================== -->
+  <div class="app">
+    <header class="cabecera">
+      <button type="button" class="icono solo-movil" id="abrir-lateral" aria-label="Abrir historial">
+        <svg class="i"><use href="#i-menu"/></svg>
+      </button>
+      <div class="titulo-conversacion">
+        <h1 id="titulo">Nueva conversación</h1>
+        <p id="subtitulo">Respondo yo con mis datos y, si no lo sé, se lo pregunto a la IA.</p>
+      </div>
+      <div class="acciones">
+        <button type="button" class="boton" id="rayos" aria-pressed="false" title="Ver cómo la IA parte cada mensaje en tokens (Tema 2)">
+          <svg class="i"><use href="#i-rayos"/></svg><span class="texto-boton">Rayos X</span>
+        </button>
+        <button type="button" class="boton" id="abrir-lab" title="Experimenta con la temperature">
+          <svg class="i"><use href="#i-lab"/></svg><span class="texto-boton">Laboratorio</span>
+        </button>
+        <button type="button" class="icono" id="tema" aria-label="Cambiar a tema oscuro" title="Cambiar tema">
+          <svg class="i"><use href="#i-luna"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <main class="chat" id="chat" aria-live="polite">
+      <section class="bienvenida" id="bienvenida">
+        <div class="logo" aria-hidden="true">N</div>
+        <h2>¿En qué te ayudo hoy?</h2>
+        <p>Envíos, pagos, devoluciones, cálculos, cambio de moneda… o lo que se te ocurra.</p>
+        <div class="sugerencias">
+          <button type="button" class="sugerencia" data-texto="¿Cuánto tarda el envío?">¿Cuánto tarda el envío?<small>Respuesta directa de NEXO</small></button>
+          <button type="button" class="sugerencia" data-texto="100 euros a dólares">100 euros a dólares<small>Usa el conversor de moneda</small></button>
+          <button type="button" class="sugerencia" data-texto="Recomiéndame un portátil para programar">Recomiéndame un portátil para programar<small>Se lo pregunto a la IA</small></button>
+          <button type="button" class="sugerencia" data-texto="¿Qué diferencia hay entre un SSD y un HDD?">¿Qué diferencia hay entre un SSD y un HDD?<small>Se lo pregunto a la IA</small></button>
+        </div>
+      </section>
+    </main>
+
+    <form class="entrada" id="formulario">
+      <textarea id="mensaje" rows="1" maxlength="2000" placeholder="Escribe tu pregunta…" aria-label="Mensaje" required></textarea>
+      <button type="submit" class="enviar" id="enviar" aria-label="Enviar">
+        <svg class="i"><use href="#i-enviar"/></svg>
+      </button>
+    </form>
+    <p class="pie">
+      Enter para enviar · Mayús + Enter para salto de línea
+      <button type="button" class="eco" id="eco" aria-pressed="false" title="Modo eco: repite lo que escribes, sin IA">eco</button>
+    </p>
+  </div>
+</div>
+
+<!-- ===================== Laboratorio ===================== -->
+<dialog class="ventana" id="laboratorio" aria-labelledby="lab-titulo">
+  <div class="ventana-cabecera">
+    <div>
+      <h2 id="lab-titulo">Laboratorio de temperatura</h2>
+      <p>La misma pregunta, 3 veces a la vez. Mueve la <b>temperature</b> y mira cuánto cambian las respuestas.</p>
+    </div>
+    <button type="button" class="icono" id="cerrar-lab" aria-label="Cerrar laboratorio"><svg class="i"><use href="#i-cerrar"/></svg></button>
+  </div>
+  <form class="ventana-cuerpo" id="form-lab">
+    <textarea class="lab-pregunta" id="lab-pregunta" maxlength="500" rows="2" required>Inventa un eslogan para TechNova</textarea>
+    <div class="lab-controles">
+      <div class="control">
+        <label for="lab-temperatura">Temperature <output id="out-temperatura">0.7</output></label>
+        <input type="range" id="lab-temperatura" min="0" max="2" step="0.1" value="0.7">
+        <small>Divide las puntuaciones antes del softmax: baja = elige casi siempre el token más probable; alta = se arriesga más.</small>
+      </div>
+      <button type="submit" class="boton primario" id="lanzar-lab">Lanzar 3 veces</button>
+    </div>
+    <div class="parecido" id="lab-parecido" hidden>
+      <span>Parecido entre respuestas</span>
+      <div class="barra"><div class="relleno" id="lab-relleno" style="width:0"></div></div>
+      <strong id="lab-porcentaje">0 %</strong>
+    </div>
+    <div class="lab-resultados" id="lab-resultados"></div>
+  </form>
+</dialog>
+
+<div class="aviso" id="aviso" role="status" hidden></div>
+<script src="{{ url_for('static', filename='chat.js') }}"></script>
+</body>
+</html>

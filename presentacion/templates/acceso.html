@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Acceso · NEXO</title>
+  <script>
+    try { const t = localStorage.getItem("nexo-tema"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+  </script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='estilo.css') }}">
+</head>
+<body>
+<main class="acceso">
+  <form class="acceso-tarjeta" method="post" action="/acceso">
+    <div class="logo" aria-hidden="true">N</div>
+    <h1>NEXO</h1>
+    <p>Escribe el código de 6 cifras que aparece en la terminal del ordenador.</p>
+    <label for="codigo">Código de acceso</label>
+    <input id="codigo" name="codigo" type="text" inputmode="numeric" autocomplete="one-time-code"
+           maxlength="7" required autofocus>
+    {% if error %}<p class="acceso-error" role="alert">{{ error }}</p>{% endif %}
+    <button type="submit" class="boton primario">Entrar</button>
+  </form>
+</main>
+</body>
+</html>
